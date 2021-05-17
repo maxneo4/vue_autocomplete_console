@@ -2,7 +2,7 @@
 div.console(ref="console")
   div.left(v-for="(item, index) in lines", :key="index")
     span.prefix {{ item.prefix }}
-    span >> 
+    span {{separator}} 
     span {{ item.command }}
 CommandAutoComplete
 </template>
@@ -10,6 +10,8 @@ CommandAutoComplete
 <script setup>
   import { ref } from 'vue';
   import CommandAutoComplete from './CommandAutoComplete.vue';
+  
+  const separator = '>> ';
   
   const lines = ref([{ prefix: "disco", command: "command" },
         { prefix: "disco", command: "dos tercos" },
@@ -31,6 +33,6 @@ div.left {
   margin: 15px;
   padding: 10px 0px 50px 10px;
   height: 100px;
-  overflow-y: scroll;
+  overflow-y: auto;
 }
 </style>
