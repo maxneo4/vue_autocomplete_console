@@ -1,9 +1,9 @@
 <template lang="pug" >
 div.autocomplete
-  input.large(v-model='state.currentCommand' 
+  input(v-model='state.currentCommand' 
   @keydown.down.self.prevent='onArrowDown' @keydown.up.self.prevent='onArrowUp' 
   @keydown.tab.self.prevent='onArrowDown'  @input='onChange'
-  @keydown.enter.self.prevent='hideOptionsAndReset'
+  @keydown.enter='onEnter'
   @keydown.escape.self.prevent='onEscape')
   ul.autocomplete-results(v-show='state.isOpen' v-bind:style="{ left: state.compos + 'px' }")
     li.autocomplete-result(v-for='(item, i) in results' :key='i' @click='setOptionOnClick(item)' 
@@ -12,8 +12,10 @@ div.autocomplete
 </template>
 
 <script setup> 
-import { ref, reactive } from 'vue';
+import { ref, reactive, defineEmit } from 'vue';
 import { textWidth } from '../api/textMeasure';
+
+const emit = defineEmit(['onNew-command']);
 
 const options = ref([ "listOracleUsers",
         "killAllConnections",
@@ -51,9 +53,15 @@ function filterResults(){
   return results.value.length;
 }
 
-const hideOptionsAndReset = () => {
+function hideOptionsAndReset(){
   state.isOpen = false;
   state.arrowCounter = -1;
+}
+
+const onEnter = () => { 
+  hideOptionsAndReset();
+  emit('onNew-command', state.currentCommand);
+  state.currentCommand = '';
 }
 
 const onEscape = () => {
@@ -95,9 +103,10 @@ const setOptionOnClick = (result) => {
 </script>
 
 <style scoped>
-input.large {
+input {
   display: table-row;
   width: 100%;
+  border-width: thin;
 }
 .autocomplete {
   position: relative;  
