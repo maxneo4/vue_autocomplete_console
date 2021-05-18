@@ -106,7 +106,12 @@ const setOptionOnClick = (result) => {
 input {
   display: table-row;
   width: 100%;
-  border-width: thin;
+  border-width: thin;  
+}
+input:focus {
+  outline: none !important;
+  border:1px solid gray;
+  box-shadow: 0 0 10px #719ECE;
 }
 .autocomplete {
   position: relative;  
@@ -128,11 +133,25 @@ input {
   text-align: left;
   padding: 4px 2px;
   cursor: pointer;
+  font-size: 13px;
 }
 
 .autocomplete-result.is-active,
 .autocomplete-result:hover {
   background-color: #4AAE9B;
   color: white;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-thumb {
+  min-height: 10px;
+  background: rgba(0,0,0,.2);
+  background-clip: padding-box;
+  border-right: 2px solid transparent!important;
+  border-left: 2px solid transparent!important;
+  -webkit-border-radius: 4px;
 }
 </style>

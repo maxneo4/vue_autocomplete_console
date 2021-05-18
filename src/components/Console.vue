@@ -44,7 +44,7 @@ div.left {
   background-color: v-bind(main_bg_color);  
   margin: 15px;
   padding: 10px 0px 50px 10px;
-  height: 100px;
+  height: 200px;
   overflow-y: auto;
 }
 </style>
