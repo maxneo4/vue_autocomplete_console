@@ -1,6 +1,6 @@
 <template lang="pug" >
 div.autocomplete
-  input(v-model='state.currentCommand' 
+  input(ref="input" v-model='state.currentCommand' 
   @keydown.down.self.prevent='onArrowDown' @keydown.up.self.prevent='onArrowUp' 
   @keydown.tab.self.prevent='onArrowDown'  @input='onChange'
   @keydown.enter='onEnter'
@@ -16,6 +16,7 @@ import { ref, reactive, defineEmit } from 'vue';
 import { textWidth } from '../api/textMeasure';
 
 const emit = defineEmit(['onNew-command']);
+const input = ref(null);
 
 let paramOptions = {
   server: {defaultValue: "localhost\sql2019dev", options:[]},
@@ -92,7 +93,7 @@ const onArrowUp = () => {
 const onChange = () => {
   if (state.currentCommand.length > 0 && filterResults() > 0) {      
         state.isOpen = true;  
-        state.compos = textWidth(state.currentCommand, "400 13.3333px Arial");                   
+        state.compos = textWidth(state.currentCommand, input.value.style.font);              
       } 
   else { 
     hideOptionsAndReset(); 
