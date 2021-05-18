@@ -8,7 +8,7 @@ div.autocomplete
   ul.autocomplete-results(v-show='state.isOpen' v-bind:style="{ left: state.compos + 'px' }")
     li.autocomplete-result(v-for='(item, i) in results' :key='i' @click='setOptionOnClick(item)' 
     :class="{ 'is-active': i === state.arrowCounter }")
-     | {{ item }}
+     | {{ item.command }}
 </template>
 
 <script setup> 
@@ -17,15 +17,19 @@ import { textWidth } from '../api/textMeasure';
 
 const emit = defineEmit(['onNew-command']);
 
-const options = ref([ "listOracleUsers",
-        "killAllConnections",
-        "createNewBizagiUser",
-        "dropBizagiUser",
-        "scriptToChangeAttribsToNText",
-        "getServerInfo",
-        "listOracleDirs",
-        "getBackupInfo",
-        "getImportTemplate"]);
+let paramOptions = {
+  server: {defaultValue: "localhost\sql2019dev", options:[]},
+  userName: {defaultValue: "sa", options:[]},
+  password: {defaultValue: "sa", parameterOptions:[]},
+  dbName: {defaultValue: "Reboot", parameterOptions:[]},
+  exeFile: {defaultValue: "Export.exe", parameterOptions:[]},
+  workspaceDir: {defaultValue: "H:\git\BC.C\Source\BizAgiCollaboration\TestPublication\ProofConcept\bin\Debug_x64", parameterOptions:[]}
+};
+const options = ref([ {command: "changeWorkSpaceDirectory", parameterOptions:[]},
+        {command: "runExe", parameterOptions:[]},
+        {command: "changeConnStringSqlServer", parameterOptions:[paramOptions.server]},
+        {command: "changeConnStringOracle", parameterOptions:[]},
+        {command: "openConfigExe", parameterOptions:[]}]);
         
 const results = ref([]);
 const state = reactive({
@@ -40,7 +44,7 @@ function setSelectedCommand(){
   if (state.arrowCounter === -1) {
     state.currentCommand = state.currentWord;
   } else {
-    state.currentCommand = results.value[state.arrowCounter];
+    state.currentCommand = results.value[state.arrowCounter].command;
   }
 }
 
@@ -48,7 +52,7 @@ function filterResults(){
   state.currentWord = state.currentCommand;
   results.value = options.value.filter(
     (item) =>
-      item.toLowerCase().indexOf(state.currentCommand.toLowerCase()) > -1
+      item.command.toLowerCase().indexOf(state.currentCommand.toLowerCase()) > -1
   );  
   return results.value.length;
 }
@@ -70,7 +74,7 @@ const onEscape = () => {
 }
         
 const onArrowDown = () => {
-  if (state.arrowCounter < results.value.length - 1) {
+  if (state.arrowCounter < results.value.length - 1 && state.isOpen) {
         state.arrowCounter = state.arrowCounter + 1;
   } else {
         state.arrowCounter = -1;
@@ -79,7 +83,7 @@ const onArrowDown = () => {
 }
 
 const onArrowUp = () => {
-  if (state.arrowCounter > 0) {
+  if (state.arrowCounter > 0 && state.isOpen) {
         state.arrowCounter = state.arrowCounter - 1;
   }
   setSelectedCommand()
@@ -96,7 +100,7 @@ const onChange = () => {
 }
 
 const setOptionOnClick = (result) => {
-  state.currentCommand = result;
+  state.currentCommand = result.command;
   hideOptionsAndReset();
 }
 
