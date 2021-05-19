@@ -8,29 +8,32 @@ div.autocomplete
   ul.autocomplete-results(v-show='state.isOpen' v-bind:style="{ left: state.compos + 'px' }")
     li.autocomplete-result(v-for='(item, i) in results' :key='i' @click='setOptionOnClick(item)' 
     :class="{ 'is-active': i === state.arrowCounter }")
-     | {{ item.command }}
+     | {{ item.senseText }}
 </template>
 
 <script setup> 
 import { ref, reactive, defineEmit } from 'vue';
 import { textWidth } from '../api/textMeasure';
+import { getArguments } from '../api/commands';
 
 const emit = defineEmit(['onNew-command']);
 const input = ref(null);
 
-let paramOptions = {
-  server: {defaultValue: "localhost\sql2019dev", options:[]},
-  userName: {defaultValue: "sa", options:[]},
-  password: {defaultValue: "sa", parameterOptions:[]},
-  dbName: {defaultValue: "Reboot", parameterOptions:[]},
-  exeFile: {defaultValue: "Export.exe", parameterOptions:[]},
-  workspaceDir: {defaultValue: "H:\git\BC.C\Source\BizAgiCollaboration\TestPublication\ProofConcept\bin\Debug_x64", parameterOptions:[]}
-};
-const options = ref([ {command: "changeWorkSpaceDirectory", parameterOptions:[]},
-        {command: "runExe", parameterOptions:[]},
-        {command: "changeConnStringSqlServer", parameterOptions:[paramOptions.server]},
-        {command: "changeConnStringOracle", parameterOptions:[]},
-        {command: "openConfigExe", parameterOptions:[]}]);
+let paramOptions = [
+  {senseText: "server", defaultValue: "localhost\sql2019dev", senseOptions:[]},
+  {senseText: "userName",  defaultValue: "sa", senseOptions:[]},
+  {senseText: "password", defaultValue: "sa", senseOptions:[]},
+  {senseText: "dbName", defaultValue: "Reboot", senseOptions:[]},
+  {senseText: "exeFile", defaultValue: "Export.exe", senseOptions:[]},
+  {senseText: "workspaceDir", defaultValue: "H:\git\BC.C\Source\BizAgiCollaboration\TestPublication\ProofConcept\bin\Debug_x64", senseOptions:[]}
+];
+const options = ref( [
+        {senseText: "changeWorkSpaceDirectory", senseOptions:[]},
+        {senseText: "runExe", senseOptions:[]},
+        {senseText: "changeConnStringSqlServer", senseOptions:[paramOptions[0], 
+          paramOptions[1], paramOptions[2], paramOptions[3]]},
+        {senseText: "changeConnStringOracle", senseOptions:[]},
+        {senseText: "openConfigExe", senseOptions:[]}]);
         
 const results = ref([]);
 const state = reactive({
@@ -45,15 +48,22 @@ function setSelectedCommand(){
   if (state.arrowCounter === -1) {
     state.currentCommand = state.currentWord;
   } else {
-    state.currentCommand = results.value[state.arrowCounter].command;
+    state.currentCommand = results.value[state.arrowCounter].senseText;
   }
 }
 
 function filterResults(){
   state.currentWord = state.currentCommand;
+  let args = getArguments(state.currentCommand);
+  let command = args[0];  
+  const foundCommand = options.value.find(opt => opt.senseText === command);
+  if(foundCommand){
+    results.value = foundCommand.senseOptions;
+    return results.value.length;
+  }
   results.value = options.value.filter(
     (item) =>
-      item.command.toLowerCase().indexOf(state.currentCommand.toLowerCase()) > -1
+      item.senseText.toLowerCase().indexOf(state.currentCommand.toLowerCase()) > -1
   );  
   return results.value.length;
 }
@@ -101,7 +111,7 @@ const onChange = () => {
 }
 
 const setOptionOnClick = (result) => {
-  state.currentCommand = result.command;
+  state.currentCommand = result.senseText;
   hideOptionsAndReset();
 }
 
