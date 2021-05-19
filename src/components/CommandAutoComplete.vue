@@ -14,18 +14,18 @@ div.autocomplete
 <script setup> 
 import { ref, reactive, defineEmit } from 'vue';
 import { textWidth } from '../api/textMeasure';
-import { getArguments } from '../api/commands';
+import { getArguments, setSelectedCommand } from '../api/commands';
 
 const emit = defineEmit(['onNew-command']);
 const input = ref(null);
 
 let paramOptions = [
-  {senseText: "server", defaultValue: "localhost\sql2019dev", senseOptions:[]},
-  {senseText: "userName",  defaultValue: "sa", senseOptions:[]},
-  {senseText: "password", defaultValue: "sa", senseOptions:[]},
-  {senseText: "dbName", defaultValue: "Reboot", senseOptions:[]},
-  {senseText: "exeFile", defaultValue: "Export.exe", senseOptions:[]},
-  {senseText: "workspaceDir", defaultValue: "H:\git\BC.C\Source\BizAgiCollaboration\TestPublication\ProofConcept\bin\Debug_x64", senseOptions:[]}
+  {senseText: "-server", defaultValue: "localhost\sql2019dev", senseOptions:[]},
+  {senseText: "-userName", defaultValue: "sa", senseOptions:[]},
+  {senseText: "-password", defaultValue: "sa", senseOptions:[]},
+  {senseText: "-dbName", defaultValue: "Reboot", senseOptions:[]},
+  {senseText: "-exeFile", defaultValue: "Export.exe", senseOptions:[]},
+  {senseText: "-workspaceDir", defaultValue: "H:\git\BC.C\Source\BizAgiCollaboration\TestPublication\ProofConcept\bin\Debug_x64", senseOptions:[]}
 ];
 const options = ref( [
         {senseText: "changeWorkSpaceDirectory", senseOptions:[]},
@@ -43,28 +43,20 @@ const state = reactive({
   currentCommand: "",
   currentWord: ""
 });
-        
-function setSelectedCommand(){
-  if (state.arrowCounter === -1) {
-    state.currentCommand = state.currentWord;
-  } else {
-    state.currentCommand = results.value[state.arrowCounter].senseText;
-  }
-}
 
-function filterResults(){
-  state.currentWord = state.currentCommand;
+function filterResults(){  
   let args = getArguments(state.currentCommand);
+  state.currentWord = args[args.length-1];
   let command = args[0];  
   const foundCommand = options.value.find(opt => opt.senseText === command);
+  let toFilter = options.value;
   if(foundCommand){
-    results.value = foundCommand.senseOptions;
-    return results.value.length;
+    toFilter = foundCommand.senseOptions;    
   }
-  results.value = options.value.filter(
+  results.value = state.currentWord.length > 1? toFilter.filter(
     (item) =>
-      item.senseText.toLowerCase().indexOf(state.currentCommand.toLowerCase()) > -1
-  );  
+      item.senseText.toLowerCase().indexOf(state.currentWord.toLowerCase()) > -1
+  ) : toFilter;  
   return results.value.length;
 }
 
@@ -81,7 +73,7 @@ const onEnter = () => {
 
 const onEscape = () => {
   hideOptionsAndReset();
-  setSelectedCommand(); //set current word
+  setSelectedCommand(state, results); //set current word
 }
         
 const onArrowDown = () => {
@@ -90,14 +82,14 @@ const onArrowDown = () => {
   } else {
         state.arrowCounter = -1;
   }
-  setSelectedCommand()
+  setSelectedCommand(state, results)
 }
 
 const onArrowUp = () => {
   if (state.arrowCounter > 0 && state.isOpen) {
         state.arrowCounter = state.arrowCounter - 1;
   }
-  setSelectedCommand()
+  setSelectedCommand(state, results)
 }
 
 const onChange = () => {
@@ -149,6 +141,7 @@ input:focus {
   padding: 4px 2px;
   cursor: pointer;
   font-size: 13px;
+  white-space: nowrap;
 }
 
 .autocomplete-result.is-active,
