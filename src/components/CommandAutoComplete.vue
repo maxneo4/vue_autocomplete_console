@@ -14,7 +14,7 @@ div.autocomplete
 <script setup> 
 import { ref, reactive, defineEmit } from 'vue';
 import { textWidth } from '../api/textMeasure';
-import { getArguments, setSelectedCommand } from '../api/commands';
+import { getTextCommandInfo, setSelectedCommand } from '../api/commands';
 
 const emit = defineEmit(['onNew-command']);
 const input = ref(null);
@@ -44,19 +44,14 @@ const state = reactive({
   currentWord: ""
 });
 
-function filterResults(){  
-  let args = getArguments(state.currentCommand);
-  state.currentWord = args[args.length-1];
-  let command = args[0];  
-  const foundCommand = options.value.find(opt => opt.senseText === command);
-  let toFilter = options.value;
-  if(foundCommand){
-    toFilter = foundCommand.senseOptions;    
-  }
-  results.value = state.currentWord.length > 1? toFilter.filter(
+function filterResults(textCommandInfo){   
+  let optionsToAutoComplete = textCommandInfo.optionsToAutoComplete;
+
+  results.value = state.currentWord.length > 1? optionsToAutoComplete.filter(
     (item) =>
       item.senseText.toLowerCase().indexOf(state.currentWord.toLowerCase()) > -1
-  ) : toFilter;  
+  ) : optionsToAutoComplete;  
+  
   return results.value.length;
 }
 
@@ -93,7 +88,10 @@ const onArrowUp = () => {
 }
 
 const onChange = () => {
-  if (state.currentCommand.length > 0 && filterResults() > 0) {      
+  let textCommandInfo = getTextCommandInfo(state.currentCommand, options.value, input.selectionStart);  
+  state.currentWord = textCommandInfo.currentWord;
+  
+  if (state.currentCommand.length > 0 && filterResults(textCommandInfo) > 0) {      
         state.isOpen = true;  
         state.compos = textWidth(state.currentCommand, input.value.style.font);              
       } 
