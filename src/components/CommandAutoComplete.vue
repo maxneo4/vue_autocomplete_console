@@ -57,6 +57,10 @@ function filterResults(textCommandInfo){
 
 function hideOptionsAndReset(){
   state.isOpen = false;
+  resetArrowCounter();
+}
+
+function resetArrowCounter(){
   state.arrowCounter = -1;
 }
 
@@ -90,6 +94,10 @@ const onArrowUp = () => {
 const onChange = () => {
   let textCommandInfo = getTextCommandInfo(state.currentCommand, options.value, input.selectionStart);  
   state.currentWord = textCommandInfo.currentWord;
+  
+  if(textCommandInfo.endsWithSpace){
+    resetArrowCounter();
+  }
   
   if (state.currentCommand.length > 0 && filterResults(textCommandInfo) > 0) {      
         state.isOpen = true;  

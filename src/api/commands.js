@@ -32,7 +32,8 @@ export function getTextCommandInfo(fullCommand, commands, caretPosition) {
 		arguments: args,
 		command: command,
 		currentWord: args[args.length-1],
-		optionsToAutoComplete: toFilter
+		optionsToAutoComplete: toFilter,
+		endsWithSpace: fullCommand.endsWith(' ')
 	};
 }
 
