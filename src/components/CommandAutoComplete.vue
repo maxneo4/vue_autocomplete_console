@@ -24,16 +24,18 @@ let paramOptions = [
   {senseText: "-userName", defaultValue: "sa", senseOptions:[]},
   {senseText: "-password", defaultValue: "sa", senseOptions:[]},
   {senseText: "-dbName", defaultValue: "Reboot", senseOptions:[]},
-  {senseText: "-exeFile", defaultValue: "Export.exe", senseOptions:[]},
+  {senseText: "-exeFile", defaultValue: "Export.exe", senseOptions:[{senseText:"createImport.exe"},
+  {senseText: "export.exe"}]},
   {senseText: "-workspaceDir", defaultValue: "H:\git\BC.C\Source\BizAgiCollaboration\TestPublication\ProofConcept\bin\Debug_x64", senseOptions:[]}
 ];
 const options = ref( [
-        {senseText: "changeWorkSpaceDirectory", senseOptions:[]},
-        {senseText: "runExe", senseOptions:[]},
+        {senseText: "changeWorkSpaceDirectory", senseOptions:[paramOptions[5]]},
+        {senseText: "runExe", senseOptions:[ paramOptions[4]]},
         {senseText: "changeConnStringSqlServer", senseOptions:[paramOptions[0], 
           paramOptions[1], paramOptions[2], paramOptions[3]]},
-        {senseText: "changeConnStringOracle", senseOptions:[]},
-        {senseText: "openConfigExe", senseOptions:[]}]);
+        {senseText: "changeConnStringOracle", senseOptions:[paramOptions[0], 
+          paramOptions[1], paramOptions[2]]},
+        {senseText: "openConfigExe", senseOptions:[ paramOptions[4]]}]);
         
 const results = ref([]);
 const state = reactive({

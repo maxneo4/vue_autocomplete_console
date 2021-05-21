@@ -9,16 +9,26 @@ function getArguments(fullCommand) {
 	return args
 }
 
-function getCommandOptions(fullCommand, command, commands){
+function getCommandOptions(fullCommand, command, commands, args){
 	let toFilter = commands;
 
-	const foundCommand = commands.find(opt => opt.senseText === command);
-  if(foundCommand){
-    toFilter = foundCommand.senseOptions.filter(
-	    (item) =>
-	      fullCommand.toLowerCase().indexOf(item.senseText.toLowerCase()) === -1
-	  );
-  }
+	if(args.length > 1){
+			const foundCommand = commands.find(opt => opt.senseText === command);
+		  if(foundCommand){
+				let options = foundCommand.senseOptions;
+				let parameter =  args.length > 2? args[args.length - 2] : '';
+				const foundParam = foundCommand.senseOptions.find(opt => opt.senseText === parameter);
+				if(foundParam){
+					options = foundParam.senseOptions;
+				}else if(args.length % 2 != 0){
+					options = [];
+				}
+		    toFilter = options.filter(
+			    (item) =>
+			      fullCommand.toLowerCase().indexOf(item.senseText.toLowerCase()) === -1
+			  );
+		  }
+	}
 
 	return toFilter;
 }
@@ -26,13 +36,13 @@ function getCommandOptions(fullCommand, command, commands){
 export function getTextCommandInfo(fullCommand, commands, caretPosition) {
 	let args = getArguments(fullCommand);
 	let command = args[0];
-	let toFilter = getCommandOptions(fullCommand, command, commands);
+	let toFilter = getCommandOptions(fullCommand, command, commands, args);
 
 	return {
 		arguments: args,
 		command: command,
 		currentWord: args[args.length-1],
-		optionsToAutoComplete: args.length === 1 || args.length % 2 === 0? toFilter : [],
+		optionsToAutoComplete: toFilter,
 		endsWithSpace: fullCommand.endsWith(' ')
 	};
 }
