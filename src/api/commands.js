@@ -56,3 +56,9 @@ export function setSelectedCommand(state, results){
   }
 	state.currentCommand = args.join(' ');
 }
+
+export function setClickedCommand(state, result){
+	let args = getArguments(state.currentCommand);
+  args[args.length-1] = result.senseText;
+	state.currentCommand = args.join(' ');
+}

@@ -14,28 +14,11 @@ div.autocomplete
 <script setup> 
 import { ref, reactive, defineEmit } from 'vue';
 import { textWidth } from '../api/textMeasure';
-import { getTextCommandInfo, setSelectedCommand } from '../api/commands';
+import { getTextCommandInfo, setSelectedCommand, setClickedCommand } from '../api/commands';
+import { options } from '../assets/RunExeCommands';
 
 const emit = defineEmit(['onNew-command']);
 const input = ref(null);
-
-let paramOptions = [
-  {senseText: "-server", defaultValue: "localhost\sql2019dev", senseOptions:[]},
-  {senseText: "-userName", defaultValue: "sa", senseOptions:[]},
-  {senseText: "-password", defaultValue: "sa", senseOptions:[]},
-  {senseText: "-dbName", defaultValue: "Reboot", senseOptions:[]},
-  {senseText: "-exeFile", defaultValue: "Export.exe", senseOptions:[{senseText:"createImport.exe"},
-  {senseText: "export.exe"}]},
-  {senseText: "-workspaceDir", defaultValue: "H:\git\BC.C\Source\BizAgiCollaboration\TestPublication\ProofConcept\bin\Debug_x64", senseOptions:[]}
-];
-const options = ref( [
-        {senseText: "changeWorkSpaceDirectory", senseOptions:[paramOptions[5]]},
-        {senseText: "runExe", senseOptions:[ paramOptions[4]]},
-        {senseText: "changeConnStringSqlServer", senseOptions:[paramOptions[0], 
-          paramOptions[1], paramOptions[2], paramOptions[3]]},
-        {senseText: "changeConnStringOracle", senseOptions:[paramOptions[0], 
-          paramOptions[1], paramOptions[2]]},
-        {senseText: "openConfigExe", senseOptions:[ paramOptions[4]]}]);
         
 const results = ref([]);
 const state = reactive({
@@ -111,7 +94,7 @@ const onChange = () => {
 }
 
 const setOptionOnClick = (result) => {
-  state.currentCommand = result.senseText;
+  setClickedCommand(state, result);
   hideOptionsAndReset();
 }
 
