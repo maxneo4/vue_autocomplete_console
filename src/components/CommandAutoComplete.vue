@@ -16,14 +16,17 @@ import { ref, reactive, defineEmit } from 'vue';
 import { textWidth } from '../api/textMeasure';
 import { getTextCommandInfo, setSelectedCommand, setClickedCommand } from '../api/commands';
 import { options } from '../assets/RunExeCommands';
+import { getNextUpPosition, getNextDownPosition } from '../api/cycle';
 
 const emit = defineEmit(['onNew-command']);
 const input = ref(null);
         
 const results = ref([]);
+const commandsHistorical = ref([]);
 const state = reactive({
   compos: 0,
   arrowCounter: -1,
+  arrowHistoricalCounter : -1,
   isOpen: false,
   currentCommand: "",
   currentWord: ""
@@ -52,6 +55,8 @@ function resetArrowCounter(){
 const onEnter = () => { 
   hideOptionsAndReset();
   emit('onNew-command', state.currentCommand);
+  commandsHistorical.value.push(state.currentCommand);
+  state.arrowHistoricalCounter = -1;
   state.currentCommand = '';
 }
 
@@ -61,19 +66,26 @@ const onEscape = () => {
 }
         
 const onArrowDown = () => {
-  if (state.arrowCounter < results.value.length - 1 && state.isOpen) {
-        state.arrowCounter = state.arrowCounter + 1;
-  } else {
-        state.arrowCounter = -1;
-  }
-  setSelectedCommand(state, results)
+  if(state.isOpen){
+    state.arrowCounter = getNextDownPosition(state.arrowCounter, results.value);
+    setSelectedCommand(state, results);
+  }  
+  if (!state.isOpen && commandsHistorical.value.length > 0) {
+      state.arrowHistoricalCounter = getNextDownPosition(state.arrowHistoricalCounter, commandsHistorical.value);
+      state.currentCommand = commandsHistorical.value[state.arrowHistoricalCounter];
+  }  
 }
 
 const onArrowUp = () => {
-  if (state.arrowCounter > 0 && state.isOpen) {
-        state.arrowCounter = state.arrowCounter - 1;
+  if (state.isOpen) {
+      state.arrowCounter = getNextUpPosition(state.arrowCounter, results.value);
+      setSelectedCommand(state, results);
   }
-  setSelectedCommand(state, results)
+  if (!state.isOpen && commandsHistorical.value.length > 0) {
+      state.arrowHistoricalCounter = getNextUpPosition(state.arrowHistoricalCounter, commandsHistorical.value);
+      state.currentCommand = commandsHistorical.value[state.arrowHistoricalCounter];
+  }
+  
 }
 
 const onChange = () => {

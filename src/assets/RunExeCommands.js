@@ -11,12 +11,10 @@ let paramOptions = [
 ];
 
 const options = ref( [
-        {senseText: "changeWorkSpaceDirectory", senseOptions:[paramOptions[5]]},
-        {senseText: "runExe", senseOptions:[ paramOptions[4]]},
-        {senseText: "changeConnStringSqlServer", senseOptions:[paramOptions[0],
-          paramOptions[1], paramOptions[2], paramOptions[3]]},
-        {senseText: "changeConnStringOracle", senseOptions:[paramOptions[0],
-          paramOptions[1], paramOptions[2]]},
-        {senseText: "openConfigExe", senseOptions:[ paramOptions[4]]}]);
+        {senseText: "changeWorkSpaceDirectory", senseOptions:[ paramOptions[5] ]},
+        {senseText: "runExe", senseOptions:[ paramOptions[4] ]},
+        {senseText: "changeConnStringSqlServer", senseOptions:paramOptions.slice(0,3)},
+        {senseText: "changeConnStringOracle", senseOptions:paramOptions.slice(0,2)},
+        {senseText: "openConfigExe", senseOptions:[ paramOptions[4] ]}]);
 
 export { options };
