@@ -4,7 +4,7 @@ div.console(ref="console")
     span.prefix {{ item.prefix }}
     span.command {{separator}} 
     span.command {{ item.command }}
-CommandAutoComplete(@onNew-command='onNewCommand')
+CommandAutoComplete(@onNew-command='onNewCommand' @on-clearCommands='onClearCommands')
 </template>
 
 <script setup>
@@ -26,6 +26,10 @@ CommandAutoComplete(@onNew-command='onNewCommand')
   const onNewCommand = (newCommand) => {
     lines.value.push({prefix:"selCommand", command: newCommand});    
     console.value.scrollTop = console.value.scrollHeight; 
+  }
+  
+  const onClearCommands = () => {
+    lines.value = [];
   }
 </script>
 

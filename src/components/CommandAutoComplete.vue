@@ -1,10 +1,12 @@
 <template lang="pug" >
 div.autocomplete
   input(ref="input" v-model='state.currentCommand' 
+  spellcheck = 'false'
   @keydown.down.self.prevent='onArrowDown' @keydown.up.self.prevent='onArrowUp' 
   @keydown.tab.self.prevent='onArrowDown'  @input='onChange'
   @keydown.enter='onEnter'
-  @keydown.escape.self.prevent='onEscape')
+  @keydown.escape.self.prevent='onEscape'
+  @keydown.ctrl.delete.self.prevent = 'onClear')
   ul.autocomplete-results(v-show='state.isOpen' v-bind:style="{ left: state.compos + 'px' }")
     li.autocomplete-result(v-for='(item, i) in results' :key='i' @click='setOptionOnClick(item)' 
     :class="{ 'is-active': i === state.arrowCounter }")
@@ -18,7 +20,7 @@ import { getTextCommandInfo, setSelectedCommand, setClickedCommand } from '../ap
 import { options } from '../assets/RunExeCommands';
 import { getNextUpPosition, getNextDownPosition } from '../api/cycle';
 
-const emit = defineEmit(['onNew-command']);
+const emit = defineEmit(['onNew-command', 'on-clearCommands']);
 const input = ref(null);
         
 const results = ref([]);
@@ -58,6 +60,10 @@ const onEnter = () => {
   commandsHistorical.value.push(state.currentCommand);
   state.arrowHistoricalCounter = -1;
   state.currentCommand = '';
+}
+
+const onClear = (where, e) => {
+  emit('on-clearCommands');
 }
 
 const onEscape = () => {
