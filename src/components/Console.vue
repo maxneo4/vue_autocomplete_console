@@ -2,6 +2,9 @@
 div
   input(type="text", size="50", v-model="url")
   button(type="button" @click="onConnect") connect
+details.error(v-if="connectionError!=undefined")
+  summary  {{ connectionError }}
+  div review CORS configuration in server
 div.console(ref="console")
   div.left(v-for="(item, index) in lines", :key="index")
     span.prefix {{ item.prefix }}
@@ -16,13 +19,14 @@ CommandAutoComplete(@onNew-command='onNewCommand' @on-clearCommands='onClearComm
   import { options } from '../assets/RunExeCommands';
   
   const url = ref("http://localhost:8020/commands")
-  const autoComplete = ref(null)
+  const connectionError = ref(null)
   
   const console = ref(null)
   const separator = '>> ';
   const main_bg_color = 'black';
   const prefix_color = 'green';
   const font_color = '#d2cdcd';
+  const error_color = 'red';
   
   const lines = ref([{ prefix: "disco", command: "command" },
         { prefix: "disco", command: "dos tercos" },
@@ -41,6 +45,18 @@ CommandAutoComplete(@onNew-command='onNewCommand' @on-clearCommands='onClearComm
   
   const onConnect = () => {
     options.value = []
+    fetchCommands();
+  }
+  
+  function fetchCommands(){
+    connectionError.value = undefined;
+    fetch(url.value, { method: 'get', headers: {
+      'content-type': 'application/json'
+    } }).then(response => {
+      response.json().then(data => options.value = data);
+    }).catch(error => {
+      connectionError.value = error;
+    });
   }
 </script>
 
@@ -65,5 +81,10 @@ div.left {
   padding: 10px 0px 50px 10px;
   height: 200px;
   overflow-y: auto;
+}
+
+.error {
+  color: v-bind(error_color);
+  font-size: 10px;
 }
 </style>

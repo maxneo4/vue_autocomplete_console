@@ -14,7 +14,7 @@ div.autocomplete
 </template>
 
 <script setup> 
-import { ref, reactive, defineEmit, defineProps, onMounted } from 'vue';
+import { ref, reactive, defineEmit, defineProps } from 'vue';
 import { textWidth } from '../api/textMeasure';
 import { getTextCommandInfo, setSelectedCommand, setClickedCommand } from '../api/commands';
 
@@ -23,12 +23,6 @@ import { getNextUpPosition, getNextDownPosition } from '../api/cycle';
 const props = defineProps({
     options: Array,
   })
-
-//const currentOptions = ref([])
-
-onMounted( () => {
-  //currentOptions.value = props.options;
-})
 
 const emit = defineEmit(['onNew-command', 'on-clearCommands']);
 const input = ref(null);
