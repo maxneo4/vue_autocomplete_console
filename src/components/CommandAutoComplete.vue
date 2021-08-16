@@ -14,11 +14,21 @@ div.autocomplete
 </template>
 
 <script setup> 
-import { ref, reactive, defineEmit } from 'vue';
+import { ref, reactive, defineEmit, defineProps, onMounted } from 'vue';
 import { textWidth } from '../api/textMeasure';
 import { getTextCommandInfo, setSelectedCommand, setClickedCommand } from '../api/commands';
-import { options } from '../assets/RunExeCommands';
+
 import { getNextUpPosition, getNextDownPosition } from '../api/cycle';
+
+const props = defineProps({
+    options: Array,
+  })
+
+//const currentOptions = ref([])
+
+onMounted( () => {
+  //currentOptions.value = props.options;
+})
 
 const emit = defineEmit(['onNew-command', 'on-clearCommands']);
 const input = ref(null);
@@ -95,7 +105,7 @@ const onArrowUp = () => {
 }
 
 const onChange = () => {
-  let textCommandInfo = getTextCommandInfo(state.currentCommand, options.value, input.selectionStart);  
+  let textCommandInfo = getTextCommandInfo(state.currentCommand, props.options, input.selectionStart);  
   state.currentWord = textCommandInfo.currentWord;
   
   if(textCommandInfo.endsWithSpace){

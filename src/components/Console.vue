@@ -1,15 +1,22 @@
 <template lang="pug">
+div
+  input(type="text", size="50", v-model="url")
+  button(type="button" @click="onConnect") connect
 div.console(ref="console")
   div.left(v-for="(item, index) in lines", :key="index")
     span.prefix {{ item.prefix }}
     span.command {{separator}} 
     span.command {{ item.command }}
-CommandAutoComplete(@onNew-command='onNewCommand' @on-clearCommands='onClearCommands')
+CommandAutoComplete(@onNew-command='onNewCommand' @on-clearCommands='onClearCommands' :options="options" ref="autoComplete")
 </template>
 
 <script setup>
   import { ref } from 'vue';
   import CommandAutoComplete from './CommandAutoComplete.vue';
+  import { options } from '../assets/RunExeCommands';
+  
+  const url = ref("http://localhost:8020/commands")
+  const autoComplete = ref(null)
   
   const console = ref(null)
   const separator = '>> ';
@@ -31,9 +38,17 @@ CommandAutoComplete(@onNew-command='onNewCommand' @on-clearCommands='onClearComm
   const onClearCommands = () => {
     lines.value = [];
   }
+  
+  const onConnect = () => {
+    options.value = []
+  }
 </script>
 
 <style scoped>
+button {
+  margin-left: 10px;
+}
+
 span.prefix {
   text-align: left;
   color: v-bind(prefix_color);
