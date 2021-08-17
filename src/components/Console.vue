@@ -17,10 +17,7 @@ CommandAutoComplete(@onNew-command='onNewCommand' @on-clearCommands='onClearComm
   import { ref } from 'vue';
   import CommandAutoComplete from './CommandAutoComplete.vue';
   import { options } from '../assets/RunExeCommands';
-  
-  const url = ref("http://localhost:8020/commands")
-  const connectionError = ref(null)
-  
+    
   const console = ref(null)
   const separator = '>> ';
   const main_bg_color = 'black';
@@ -28,15 +25,15 @@ CommandAutoComplete(@onNew-command='onNewCommand' @on-clearCommands='onClearComm
   const font_color = '#d2cdcd';
   const error_color = 'red';
   
-  const lines = ref([{ prefix: "disco", command: "command" },
-        { prefix: "disco", command: "dos tercos" },
-        { prefix: "disco", command: "No more" },
-        { prefix: "disco B", command: "command" },
-        { prefix: "disco C", command: "command" }])
+  const url = ref("http://localhost:8020/commands")
+  const connectionError = ref(null)
+  const lines = ref([])
+  const result = ref(null)
+  const prefix = ref("")
         
   const onNewCommand = (newCommand) => {
-    lines.value.push({prefix:"selCommand", command: newCommand});    
-    console.value.scrollTop = console.value.scrollHeight; 
+    addLine(newCommand);
+    fetchRunCommand(newCommand);
   }
   
   const onClearCommands = () => {
@@ -48,6 +45,11 @@ CommandAutoComplete(@onNew-command='onNewCommand' @on-clearCommands='onClearComm
     fetchCommands();
   }
   
+  function addLine(newText){
+    lines.value.push({prefix:prefix.value, command: newText});
+    console.value.scrollTop = console.value.scrollHeight;
+  }
+  
   function fetchCommands(){
     connectionError.value = undefined;
     fetch(url.value, { method: 'get', headers: {
@@ -57,6 +59,23 @@ CommandAutoComplete(@onNew-command='onNewCommand' @on-clearCommands='onClearComm
     }).catch(error => {
       connectionError.value = error;
     });
+  }
+  
+  function fetchRunCommand(newCommand){    
+    fetch("http://localhost:8020/runCommand", { method: 'post', headers: {
+      'content-type': 'application/json'
+    }, body: JSON.stringify({ command: newCommand })
+    }).then(response => {
+      response.json().then(data => updateDataFromOutPutExecution(data));
+    }).catch(error => {
+      connectionError.value = error;
+    });
+  }
+  
+  function updateDataFromOutPutExecution(data){
+    result.value = data;
+    prefix.value = result.value.prefix;
+    addLine(result.value.result);
   }
 </script>
 
