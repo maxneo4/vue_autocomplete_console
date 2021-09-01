@@ -1,3 +1,6 @@
+* fix firefox bug in autocomplete after x spaces 
+
+
 6. [DONE] fix click to select command by mouse
 2. [DONE] Get out options of component, receive options from server
 3. [DONE] Add command arrow down and up / or autocomplete historical

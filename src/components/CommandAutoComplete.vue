@@ -25,7 +25,8 @@ const props = defineProps({
   })
 
 const emit = defineEmit(['onNew-command', 'on-clearCommands']);
-const input = ref(null);
+const input = ref(null);        
+const fontCommandText = '15px Arial, sans-serif';
         
 const results = ref([]);
 const commandsHistorical = ref([]);
@@ -108,7 +109,7 @@ const onChange = () => {
   
   if (state.currentCommand.length > 0 && filterResults(textCommandInfo) > 0) {      
         state.isOpen = true;  
-        state.compos = textWidth(state.currentCommand, input.value.style.font);              
+        state.compos = textWidth(state.currentCommand, fontCommandText);              
       } 
   else { 
     hideOptionsAndReset(); 
@@ -127,6 +128,7 @@ input {
   display: table-row;
   width: 100%;
   border-width: thin;  
+  font: v-bind(fontCommandText);
 }
 input:focus {
   outline: none !important;

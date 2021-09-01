@@ -56,6 +56,7 @@ CommandAutoComplete(@onNew-command='onNewCommand' @on-clearCommands='onClearComm
       'content-type': 'application/json'
     } }).then(response => {
       response.json().then(data => options.value = data);
+      addLine(`connected to ${url.value}`)
     }).catch(error => {
       connectionError.value = error;
     });
