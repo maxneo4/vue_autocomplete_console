@@ -109,7 +109,7 @@ const onChange = () => {
   
   if (state.currentCommand.length > 0 && filterResults(textCommandInfo) > 0) {      
         state.isOpen = true;  
-        state.compos = textWidth(state.currentCommand, fontCommandText);              
+        state.compos = textWidth(state.currentCommand, fontCommandText);               
       } 
   else { 
     hideOptionsAndReset(); 
@@ -141,7 +141,7 @@ input:focus {
   margin-right: 10px;
 }
 .autocomplete-results {
-  position: relative;
+  position: absolute;
   padding: 0;
   margin: 0;
   border: 1px solid #eeeeee;
