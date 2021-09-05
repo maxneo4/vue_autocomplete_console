@@ -9,7 +9,7 @@ div.console(ref="console")
   div.left(v-for="(item, index) in lines", :key="index")
     span.prefix {{ item.prefix }}
     span.command {{separator}} 
-    span.command {{ item.command }}
+    span.command(v-bind:style="{ color: item.color }") {{ item.command }}
 CommandAutoComplete(@onNew-command='onNewCommand' @on-clearCommands='onClearCommands' :options="options" ref="autoComplete")
 </template>
 
@@ -22,9 +22,9 @@ CommandAutoComplete(@onNew-command='onNewCommand' @on-clearCommands='onClearComm
   const separator = '>> ';
   const main_bg_color = 'black';
   const prefix_color = 'green';
-  const font_color = '#d2cdcd';
+  const default_color = '#d2cdcd';  
   const error_color = 'red';
-  
+    
   const url = ref("http://localhost:8020/commands")
   const connectionError = ref(null)
   const lines = ref([])
@@ -45,8 +45,8 @@ CommandAutoComplete(@onNew-command='onNewCommand' @on-clearCommands='onClearComm
     fetchCommands();
   }
   
-  function addLine(newText){
-    lines.value.push({prefix:prefix.value, command: newText});
+  function addLine(newText, font_color = default_color){
+    lines.value.push({prefix:prefix.value, command: newText, color: font_color});
     console.value.scrollTop = console.value.scrollHeight;
   }
   
@@ -76,7 +76,11 @@ CommandAutoComplete(@onNew-command='onNewCommand' @on-clearCommands='onClearComm
   function updateDataFromOutPutExecution(data){
     result.value = data;
     prefix.value = result.value.prefix;
-    addLine(result.value.result);
+    if(result.value.error){      
+      addLine(result.value.error, error_color);      
+    }else{
+      addLine(result.value.result, default_color);
+    }    
   }
 </script>
 
@@ -90,7 +94,7 @@ span.prefix {
   color: v-bind(prefix_color);
 }
 span.command {
-  color: v-bind(font_color);
+  color: v-bind(default_color);
 }
 div.left {
   text-align: left;
