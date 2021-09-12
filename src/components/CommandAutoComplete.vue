@@ -146,8 +146,9 @@ input:focus {
   margin: 0;
   border: 1px solid #eeeeee;
   min-height: 1em;
-  max-height: 8em;
-  overflow: auto;
+  max-height: 12em;
+  overflow-y: auto;
+  overflow-x: hidden;
   display: table-caption;
 }
 .autocomplete-result {

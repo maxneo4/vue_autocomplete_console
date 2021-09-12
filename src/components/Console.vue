@@ -4,7 +4,7 @@ div
   button(type="button" @click="onConnect") connect
 details.error(v-if="connectionError!=undefined")
   summary  {{ connectionError }}
-  div review CORS configuration in server
+  div review CORS configuration in server or server is up
 div.console(ref="console")
   div.left(v-for="(item, index) in lines", :key="index")
     span.prefix {{ item.prefix }}
