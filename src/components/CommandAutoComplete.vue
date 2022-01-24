@@ -14,7 +14,7 @@ div.autocomplete
 </template>
 
 <script setup> 
-import { ref, reactive, defineEmit, defineProps } from 'vue';
+import { ref, reactive } from 'vue';
 import { textWidth } from '../api/textMeasure';
 import { getTextCommandInfo, setSelectedCommand, setClickedCommand } from '../api/commands';
 
@@ -24,7 +24,7 @@ const props = defineProps({
     options: Array,
   })
 
-const emit = defineEmit(['onNew-command', 'on-clearCommands']);
+const emit = defineEmits(['onNew-command', 'on-clearCommands']);
 const input = ref(null);        
 const fontCommandText = '15px Arial, sans-serif';
         
